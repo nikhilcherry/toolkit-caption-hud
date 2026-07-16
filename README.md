@@ -70,6 +70,15 @@ Removes all currently visible captions.
 
 Live-switches between `'overlay'` and `'fullscreen'`.
 
+### `hud.setFontSize(px)`
+
+Changes the base caption text size at runtime — for a user-facing "text
+size" control. Fullscreen mode keeps its 1.5x scaling on top of this.
+
+### `hud.setHighContrast(enabled)`
+
+Toggles the solid backing plate and text shadow at runtime.
+
 ### `hud.destroy()`
 
 Removes all DOM nodes and the injected `<style>` tag, restores any inline

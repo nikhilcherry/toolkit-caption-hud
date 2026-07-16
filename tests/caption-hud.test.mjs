@@ -128,6 +128,53 @@ test('setMode() rejects an invalid mode', () => {
   hud.destroy();
 });
 
+// --- runtime setters ---
+
+test('setFontSize() updates the CSS variable, keeping the fullscreen 1.5x scale', () => {
+  const hud = new CaptionHUD(freshContainer(), { fontSizePx: 20 });
+  hud.setFontSize(30);
+  assert.equal(hud._root.style.getPropertyValue('--chud-font-size'), '30px');
+
+  hud.setMode('fullscreen');
+  assert.equal(hud._root.style.getPropertyValue('--chud-font-size'), '45px'); // 1.5x
+  hud.destroy();
+});
+
+test('setFontSize() rejects non-positive or non-finite sizes', () => {
+  const hud = new CaptionHUD(freshContainer());
+  assert.throws(() => hud.setFontSize(0), TypeError);
+  assert.throws(() => hud.setFontSize(-5), TypeError);
+  assert.throws(() => hud.setFontSize(NaN), TypeError);
+  assert.throws(() => hud.setFontSize('22'), TypeError);
+  hud.destroy();
+});
+
+test('setHighContrast() toggles the high-contrast class', () => {
+  const hud = new CaptionHUD(freshContainer(), { highContrast: false });
+  const cls = `${hud._prefix}-high-contrast`;
+  assert.equal(hud._root.classList.contains(cls), false);
+  hud.setHighContrast(true);
+  assert.equal(hud._root.classList.contains(cls), true);
+  hud.setHighContrast(false);
+  assert.equal(hud._root.classList.contains(cls), false);
+  hud.destroy();
+});
+
+// --- eviction animation ---
+
+test('an evicted caption uses the quick -removing transition, not the slow -fading one', () => {
+  const hud = new CaptionHUD(freshContainer(), { maxVisible: 1, reduceMotion: false });
+  hud.push({ who: 'A', text: 'first' });
+  hud.push({ who: 'B', text: 'second' });
+
+  // The evicted element is still in the DOM mid-animation but no longer tracked.
+  const evicted = itemEls(hud).find((el) => captionText(el) === 'first');
+  assert.ok(evicted, 'evicted element should still be animating out');
+  assert.equal(evicted.classList.contains(`${hud._prefix}-removing`), true);
+  assert.equal(evicted.classList.contains(`${hud._prefix}-fading`), false);
+  hud.destroy();
+});
+
 // --- destroy() ---
 
 test('destroy() removes the root and injected style tag, and is idempotent', () => {

@@ -169,6 +169,32 @@ export class CaptionHUD {
   }
 
   /**
+   * Change the base caption text size at runtime (e.g. a user-facing
+   * "text size" control). Fullscreen mode keeps its 1.5x scaling.
+   * @param {number} px
+   * @returns {void}
+   */
+  setFontSize(px) {
+    this._assertNotDestroyed();
+    if (!Number.isFinite(px) || px <= 0) {
+      throw new TypeError(`CaptionHUD.setFontSize: invalid size "${px}"`);
+    }
+    this._opts.fontSizePx = px;
+    this._applyModeClass();
+  }
+
+  /**
+   * Toggle the solid backing plate / text shadow at runtime.
+   * @param {boolean} enabled
+   * @returns {void}
+   */
+  setHighContrast(enabled) {
+    this._assertNotDestroyed();
+    this._opts.highContrast = !!enabled;
+    this._applyContrastClass();
+  }
+
+  /**
    * Remove all DOM nodes and injected styles created by this instance, restore
    * any container styling it changed, and detach all listeners/timers.
    * @returns {void}
@@ -327,7 +353,7 @@ export class CaptionHUD {
 
     if (animate) {
       const p = this._prefix;
-      el.classList.add(`${p}-fading`);
+      el.classList.add(`${p}-removing`);
       el.style.opacity = '0';
       window.setTimeout(() => {
         if (el.parentNode) el.parentNode.removeChild(el);
@@ -405,6 +431,9 @@ export class CaptionHUD {
 .${p}-item.${p}-fading {
   transition: opacity ${FADE_DURATION_MS}ms ease, transform ${FADE_DURATION_MS}ms ease;
 }
+.${p}-item.${p}-removing {
+  transition: opacity ${REMOVE_DURATION_MS}ms ease;
+}
 .${p}-speaker {
   display: block;
   font-variant: small-caps;
@@ -425,7 +454,8 @@ export class CaptionHUD {
 }
 .${p}-root.${p}-reduced .${p}-item,
 .${p}-root.${p}-reduced .${p}-item.${p}-enter,
-.${p}-root.${p}-reduced .${p}-item.${p}-fading {
+.${p}-root.${p}-reduced .${p}-item.${p}-fading,
+.${p}-root.${p}-reduced .${p}-item.${p}-removing {
   transition: none !important;
   transform: none !important;
 }
