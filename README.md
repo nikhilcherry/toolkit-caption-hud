@@ -6,7 +6,8 @@ bottom-anchored overlay (composited on top of video/canvas) or fullscreen (a
 smart-glasses stand-in on a phone). Built for a captioning app for deaf and
 hard-of-hearing users, so readability is the entire point.
 
-Plain ES module, zero dependencies, no build step.
+Plain ES module, zero runtime dependencies, no build step. (`npm install`
+is only needed to run the test suite — see Tests below.)
 
 ## Quick start
 
@@ -117,3 +118,28 @@ Controls:
 Consumes attribution-labeled ASR results (speaker-labeled transcript events);
 pairs with **CaptionRelay** on the receiving device to get those events from
 a laptop to a phone or tablet acting as the fullscreen display.
+
+## Tests
+
+```bash
+npm install   # pulls in jsdom, the one dev-only dependency in this repo
+node --test
+```
+
+Zero test coverage previously. This component's whole job is DOM
+manipulation (`document.createElement`, `window.matchMedia`,
+`window.getComputedStyle`, `requestAnimationFrame`), so real testing needs
+a DOM — jsdom, installed purely as a devDependency; the shipped
+`caption-hud.js` itself still has zero runtime dependencies.
+
+21 tests: constructor validation and the accessible `role="log"` region,
+`push()`/`update()`/`clear()`/`setMode()` against the real rendered DOM,
+`maxVisible` eviction, per-position stack opacities, `destroy()`'s cleanup
+(including restoring a container's original inline `position` — verified
+both when the constructor changes it and when it correctly leaves an
+already-positioned container alone), `reduceMotion: 'auto'` following a
+(fake, controllable) `matchMedia`, and the full push → fade → remove
+lifecycle under both reduced and normal motion (the latter genuinely
+waits out the real `FADE_DURATION_MS`/`REMOVE_DURATION_MS` timers, ~1.6s,
+since those aren't configurable — the one deliberately slow test in the
+suite). All passing.

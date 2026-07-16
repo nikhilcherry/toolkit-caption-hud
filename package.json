@@ -1,0 +1,14 @@
+{
+  "name": "toolkit-caption-hud",
+  "version": "1.0.0",
+  "description": "Standalone, reusable UI component that turns {who, color, text} caption events into accessible, floating, fading, color-coded captions.",
+  "type": "module",
+  "main": "caption-hud.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.0"
+  },
+  "license": "MIT"
+}
