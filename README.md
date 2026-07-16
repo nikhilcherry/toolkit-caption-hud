@@ -1,5 +1,15 @@
 # CaptionHUD
 
+<p align="center">
+  <img src="docs/demo-preview.svg" alt="CaptionHUD overlay and fullscreen mode demo" width="820">
+</p>
+
+<p align="center">
+  <img alt="js" src="https://img.shields.io/badge/JavaScript-zero_dependencies-F7DF1E">
+  <img alt="a11y" src="https://img.shields.io/badge/a11y-aria--live_%2B_reduced--motion-16a34a">
+  <img alt="license" src="https://img.shields.io/badge/license-MIT-green">
+</p>
+
 A standalone, reusable UI component that turns `{who, color, text}` caption
 events into accessible, floating, fading, color-coded captions. Renders as a
 bottom-anchored overlay (composited on top of video/canvas) or fullscreen (a
@@ -143,3 +153,7 @@ lifecycle under both reduced and normal motion (the latter genuinely
 waits out the real `FADE_DURATION_MS`/`REMOVE_DURATION_MS` timers, ~1.6s,
 since those aren't configurable — the one deliberately slow test in the
 suite). All passing.
+
+## License
+
+MIT
